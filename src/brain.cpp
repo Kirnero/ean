@@ -48,6 +48,10 @@ Interval<mpreal> interval_root_Newton(
     return initial_guess;
 }
 
+//Intervals///////////
+//////////////////////
+/////// Real numbers
+
 void derivative(
     mpreal function[a_length],
     mpreal derivative_function[a_length]
@@ -56,6 +60,19 @@ void derivative(
         derivative_function[i] = function[i-1] * i;
     }
     derivative_function[0] = 0;
+}
+
+void synthetic_division( // 0 ~ stopien-2 -> quotient
+    mpreal root,
+    mpreal function[a_length],
+    int stopien,
+    mpreal destination[a_length]
+){
+    destination[0] = function[0];
+    for(int i = 1; i < stopien-1; i++){
+        destination[i] = destination[i-1] * root + function[i];
+    }
+    destination[stopien-1]=0, destination[stopien]=0;
 }
 
 mpreal function_value(
@@ -79,7 +96,6 @@ mpreal root_Newton(
 ){
     mpreal fx; //value of function
     mpreal dfx; //value of derivative
-    cout.precision(cout_precision);
     for (int iterative = 0; iterative < 100; iterative=iterative+1) {
         fx = function_value(initial_guess, function, stopien);
         dfx = function_value(initial_guess, derivative_function,stopien);
@@ -91,5 +107,6 @@ mpreal root_Newton(
             break;}
         initial_guess = initial_guess - fx / dfx;
     }
+    cout << initial_guess << endl;
     return initial_guess;
 }

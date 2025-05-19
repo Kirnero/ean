@@ -17,7 +17,7 @@ void interval_derivative(
 
 Interval<mpreal> interval_function_value(
     Interval<mpreal> x,
-    Interval<mpreal> a[a_length],
+    Interval<mpreal> function[a_length],
     int stopien
 );
 
@@ -28,14 +28,25 @@ Interval<mpreal> interval_root_Newton(
     int stopien
 );
 
+//Intervals///////////
+//////////////////////
+/////// Real numbers
+
 void derivative(
     mpreal function[a_length],
     mpreal derivative_function[a_length]
 );
 
+void synthetic_division(
+    mpreal root,
+    mpreal function[a_length],
+    int stopien,
+    mpreal destination[a_length]
+);
+
 mpreal function_value(
     mpreal x,
-    mpreal a[a_length],
+    mpreal function[a_length],
     int stopien
 );
 
