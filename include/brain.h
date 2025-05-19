@@ -28,4 +28,22 @@ Interval<mpreal> interval_root_Newton(
     int stopien
 );
 
+void derivative(
+    mpreal function[a_length],
+    mpreal derivative_function[a_length]
+);
+
+mpreal function_value(
+    mpreal x,
+    mpreal a[a_length],
+    int stopien
+);
+
+mpreal root_Newton(
+    mpreal initial_guess,
+    mpreal function[a_length],
+    mpreal derivative_function[a_length],
+    int stopien
+);
+
 #endif
