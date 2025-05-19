@@ -7,13 +7,13 @@ CFLAGS = -I/usr/local/mpfr-4.0.2/include -L/usr/local/mpfr-4.0.2/lib -lmpfr -lgm
 OBJECT_DIR = obj
 SOURCE_DIR = src
 
-_DEPS = interval.h mpreal.h
+_DEPS = interval.h mpreal.h brain.h
 DEPS = $(patsubst %,$(INCLUDE_DIR)/%,$(_DEPS))
 
 $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
-_OBJ = main.o
+_OBJ = main.o brain.o
 OBJ = $(patsubst %,$(OBJECT_DIR)/%,$(_OBJ))
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp $(DEPS) | $(OBJECT_DIR)
