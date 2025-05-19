@@ -1,5 +1,5 @@
 #include <iostream>
-#include "interval.h"
+#include "../include/interval.h"
 using namespace std;
 using namespace mpfr;
 using namespace interval_arithmetic;
