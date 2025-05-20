@@ -57,4 +57,10 @@ mpreal root_Newton(
     int stopien
 );
 
+void all_roots_Newton(
+    mpreal destination[a_length],
+    mpreal function[a_length],
+    int stopien
+);
+
 #endif

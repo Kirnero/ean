@@ -4,24 +4,14 @@
 
 void initialize(
     int &stopien,
-    mpreal &x,
-    mpreal function[a_length],
-    mpreal derivative_function[a_length]
+    mpreal function[a_length]
 ){
-
-    stopien = 4;
-    x=1;
+    stopien = 3;
 
     function[0]=1,
     function[1]=-4,
     function[2]=2,
     function[3]=2;
-
-    derivative(function, derivative_function);
-    // Print derivative
-    cout << "Derivative:"<<endl;
-    for (int iterative = 0; iterative < stopien; iterative=iterative+1)
-        cout << iterative << ": x = " << derivative_function[iterative] << endl;
 }
 
 void interval_initialize(
@@ -55,25 +45,21 @@ int main() {
     Interval<mpreal> interval_derivative_function[a_length];
 
     cout.precision(cout_precision);
-    mpreal initial_guess;
     mpreal function[a_length];
-    mpreal derivative_function[a_length];
+    mpreal wynik[a_length];
 
     if(interval_input){
         interval_initialize(stopien, interval_initial_guess, interval_function, interval_derivative_function);
     }
     else{
-        initialize(stopien, initial_guess, function, derivative_function);
+        initialize(stopien, function);
     }
     
-    mpreal wynik;
-    while(stopien!=0){
-        wynik = root_Newton(initial_guess,function,derivative_function,stopien);
-        synthetic_division(wynik,function,stopien, function);
-        derivative(function,derivative_function);
-        stopien--;
-        cout << stopien << ": " << wynik << endl;
+    all_roots_Newton(wynik, function, stopien);
+    for(int i = 0; i<stopien; i++){
+        cout << wynik[i] << endl;
     }
+    cout << stopien << endl;
     
     return 0;
 }
