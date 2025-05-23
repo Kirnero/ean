@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../include/interval.h"
 #include "../include/brain.h"
+#include "../include/gui.h"
 
 void initialize(
     int &stopien,
@@ -56,7 +57,22 @@ int main() {
 
     }
     
+    Fl_Window* win = new Fl_Window(400, 200, "Hello");
+    win->begin();
+    win->position(100,100);
     
-    
-    return 0;
+    Fl_Choice* choice = new Fl_Choice(120, 20, 150, 25, "Typ danych");
+    choice->add("Rzeczywiste punktowe|Rzeczywiste przedziałowe punktowe|Rzeczywiste przedziałowe");
+    choice->value(0);
+    choice->callback(on_choice_change);
+
+    input1 = new Fl_Input(120, 60, 150, 25, "Value A:");
+    input2 = new Fl_Input(120, 90, 150, 25, "Value B:");
+    Fl_Button* btn = new Fl_Button(120, 130, 80, 30, "Calculate");
+    btn->callback(on_calculate);
+    output = new Fl_Box(10, 170, 380, 20, "Wynik");
+
+    win->end();
+    win->show();
+    return Fl::run();
 }

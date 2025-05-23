@@ -3,24 +3,24 @@
 
 CC=g++
 INCLUDE_DIR = include
-CFLAGS = -I/usr/local/mpfr-4.0.2/include -L/usr/local/mpfr-4.0.2/lib -lmpfr -lgmp
+CFLAGS = -I/usr/local/mpfr-4.0.2/include -L/usr/local/mpfr-4.0.2/lib -lmpfr -lgmp -lfltk
 OBJECT_DIR = obj
 SOURCE_DIR = src
 
-_DEPS = interval.h mpreal.h brain.h
+_DEPS = interval.h mpreal.h brain.h gui.h
 DEPS = $(patsubst %,$(INCLUDE_DIR)/%,$(_DEPS))
 
 $(OBJECT_DIR):
 	mkdir -p $(OBJECT_DIR)
 
-_OBJ = main.o brain.o
+_OBJ = main.o brain.o gui.o
 OBJ = $(patsubst %,$(OBJECT_DIR)/%,$(_OBJ))
 
 $(OBJECT_DIR)/%.o: $(SOURCE_DIR)/%.cpp $(DEPS) | $(OBJECT_DIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 main: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o main $^ $(CFLAGS)
 
 # Cleaning up files
 .PHONY: clean
