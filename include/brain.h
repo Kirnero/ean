@@ -15,6 +15,13 @@ void interval_derivative(
     Interval<mpreal> derivative_function[a_length]
 );
 
+void interval_synthetic_division( // 0 ~ stopien-2 -> quotient
+    Interval<mpreal> root,
+    Interval<mpreal> function[a_length],
+    int stopien,
+    Interval<mpreal> destination[a_length]
+);
+
 Interval<mpreal> interval_function_value(
     Interval<mpreal> x,
     Interval<mpreal> function[a_length],
@@ -25,6 +32,17 @@ Interval<mpreal> interval_root_Newton(
     Interval<mpreal> initial_guess,
     Interval<mpreal> function[a_length],
     Interval<mpreal> derivative_function[a_length],
+    int stopien
+);
+
+Interval<mpreal> interval_get_initial_guess(
+    Interval<mpreal> function[a_length],
+    int stopien
+);
+
+void interval_all_roots_Newton(
+    Interval<mpreal> destination[a_length],
+    Interval<mpreal> function[a_length],
     int stopien
 );
 
