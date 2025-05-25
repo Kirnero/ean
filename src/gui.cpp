@@ -3,20 +3,80 @@
 Fl_Input* input1;
 Fl_Input* input2;
 Fl_Box* output;
+Fl_Box* current_function;
+Fl_Box* log_box;
 int current_choice=0; // 0 - real; 1 - point-interval; 2 - real interval
-static string result;
+//Basically no functional differnce between 1 and 2
+
+
 
 void on_choice_change(Fl_Widget* w, void*) {
     Fl_Choice* choice = (Fl_Choice*)w;
     current_choice = choice->value();
-    input1->label(current_choice == 0 ? "Value A:" : "Value X:");
-    input2->label(current_choice == 1 ? "Value B:" : "Value Y:");
+    //input2->label(current_choice == 1 ? "Value B:" : "Value Y:");
 }
 
-void on_calculate(Fl_Widget*, void*) {
-    string a = input1->value();
-    string b = input2->value();
-    result = "You entered: " + a + ", " + b + " for choice " + std::to_string(current_choice);
-    output->label(result.c_str());
-    output->redraw();
+void get_stopien(Fl_Widget* w, void* stopien){
+    string canditate = input1->value();
+    int* stopien_ptr = static_cast<int*>(stopien);
+    for (int i = 0; i < canditate.length(); i++) {
+        if(!isdigit(canditate[i])){
+            log_box->label("Error: Wartość zmiennej 'stopien' musi być liczbą naturalną");
+            log_box->redraw();
+            return;
+        }
+    }
+    *stopien_ptr = stoi(canditate);
+    log_box->label("Sukces: Pomyślnie zapisano zmienną 'stopien'");
+    log_box->redraw();
+}
+
+void get_data_real(Fl_Widget* w, void* callback_data) {
+    CallbackDataReal* cb = static_cast<CallbackDataReal*>(callback_data);
+
+    mpreal* wynik = static_cast<mpreal*>(cb->function);
+    int* stopien_ptr = static_cast<int*>(cb->stopien);
+    int* collected_data_ptr = static_cast<int*>(cb->collected_data);
+
+    if(*stopien_ptr<*collected_data_ptr){
+        log_box->label("Error: Podano więcej wyznaczników funkcji niż wynosi stopien");
+        log_box->redraw();
+        return;
+    }
+    
+    string data = input2->value();
+
+    try {
+        std::stod(data);  // if this throws, input is invalid
+    } catch (...) {
+        log_box->label("Error: Wartość wykładnika musi być liczbą rzeczywistą");
+        log_box->redraw();
+        return;
+    }
+
+    wynik[*collected_data_ptr] = data;
+    (*collected_data_ptr)++;
+    print_saved_function_real(callback_data);
+    log_box->label("Sukces: Pomyślnie zapisano wykładnik funkcji");
+    log_box->redraw();
+}
+
+void print_saved_function_real(void* callback_data) {
+    CallbackDataReal* cb = static_cast<CallbackDataReal*>(callback_data);
+    mpreal* function_ptr = static_cast<mpreal*>(cb->function);
+    int* stopien_ptr = static_cast<int*>(cb->stopien);
+    int* collected_data_ptr = static_cast<int*>(cb->collected_data);
+
+    std::ostringstream oss;
+    oss << "Dotychczasowo zapisane dane:";
+    for (int i = 0; i <= *stopien_ptr; i++) {
+        oss << "\nx_(" << *stopien_ptr - i << ") : " << function_ptr[i];
+    }
+    string output_str = oss.str();
+
+    oss.str("");
+    oss.clear();
+
+    current_function->copy_label(output_str.c_str());
+    current_function->redraw();
 }
