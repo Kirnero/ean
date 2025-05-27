@@ -14,26 +14,37 @@ using namespace std;
 #pragma once
 extern Fl_Input* input1;
 extern Fl_Input* input2;
+extern Fl_Input* input_prec;
 extern Fl_Box* output;
 extern Fl_Box* log_box;
 extern Fl_Box* current_function;
+extern Fl_Choice* choice;
+extern Fl_Button* stopien_btn;
+extern Fl_Button* wyznacznik_btn;
+extern Fl_Button* wynik_btn;
+//extern Fl_Button* prec_btn;
 extern int current_choice; // 0 - real; 1 - point-interval; 2 - real interval
 
 struct CallbackDataReal {
     int* stopien;
     int* collected_data;
     mpreal* function;
+    mpreal* wynik;
 };
 
-void on_choice_change(
-    Fl_Widget* w,
-    void*
-);
+struct CallbackDataInterval {
+    int* stopien;
+    int* collected_data;
+    Interval<mpreal>* function;
+    Interval<mpreal>* wynik;
+};
 
-void on_calculate(
-    Fl_Widget*,
-    void*
-);
+struct CallbackData {
+    CallbackDataReal* callback_data_real;
+    CallbackDataInterval* callback_data_interval;
+};
+
+void on_choice_change(Fl_Widget* w, void* data);
 
 void get_stopien(Fl_Widget* w, void* stopien);
 

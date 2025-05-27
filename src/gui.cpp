@@ -2,18 +2,34 @@
 
 Fl_Input* input1;
 Fl_Input* input2;
+Fl_Input* input_prec;
 Fl_Box* output;
 Fl_Box* current_function;
 Fl_Box* log_box;
+Fl_Choice* choice;
+Fl_Button* stopien_btn;
+Fl_Button* wyznacznik_btn;
+Fl_Button* wynik_btn;
+//Fl_Button* prec_btn;
 int current_choice=0; // 0 - real; 1 - point-interval; 2 - real interval
 //Basically no functional differnce between 1 and 2
 
 
 
-void on_choice_change(Fl_Widget* w, void*) {
-    Fl_Choice* choice = (Fl_Choice*)w;
+void on_choice_change(Fl_Widget* w, void* data) {
+    CallbackData* cb = static_cast<CallbackData*>(data);
+
+    CallbackDataReal* cbr = static_cast<CallbackDataReal*>(cb->callback_data_real);
+
     current_choice = choice->value();
-    //input2->label(current_choice == 1 ? "Value B:" : "Value Y:");
+    
+    if(current_choice==0){
+        wynik_btn->callback(get_data_real, static_cast<void*>(cbr));
+    }
+    else{
+        // Some code
+    }
+    
 }
 
 void get_stopien(Fl_Widget* w, void* stopien){
@@ -62,10 +78,10 @@ void get_data_real(Fl_Widget* w, void* callback_data) {
 }
 
 void print_saved_function_real(void* callback_data) {
-    CallbackDataReal* cb = static_cast<CallbackDataReal*>(callback_data);
-    mpreal* function_ptr = static_cast<mpreal*>(cb->function);
-    int* stopien_ptr = static_cast<int*>(cb->stopien);
-    int* collected_data_ptr = static_cast<int*>(cb->collected_data);
+    CallbackDataReal* cbr = static_cast<CallbackDataReal*>(callback_data);
+    mpreal* function_ptr = static_cast<mpreal*>(cbr->function);
+    int* stopien_ptr = static_cast<int*>(cbr->stopien);
+    int* collected_data_ptr = static_cast<int*>(cbr->collected_data);
 
     std::ostringstream oss;
     oss << "Dotychczasowo zapisane dane:";

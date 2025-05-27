@@ -78,7 +78,8 @@ Interval<mpreal> interval_root_Newton(
     Interval<mpreal> initial_guess,
     Interval<mpreal> function[a_length],
     Interval<mpreal> derivative_function[a_length],
-    int stopien
+    int stopien,
+    int &bisection_counter
 ){
     Interval<mpreal> fx; //value of function
     Interval<mpreal> dfx; //value of derivative
@@ -88,9 +89,9 @@ Interval<mpreal> interval_root_Newton(
     //cout << epsilon << endl;
     cout.precision(cout_precision);
     //cout << "Initial guess : [" << initial_guess.a << " ; " << initial_guess.b << "]" << endl;
-    int iterative = 1; // How many iterations it takes
+    int iterative = 0; // How many iterations it takes
 
-    while(width(initial_guess) > epsilon) {
+    for(int i=0; i<max_iterations; i++) {
         midpoint.a = (initial_guess.a+initial_guess.b)/2; midpoint.b=midpoint.a;
         fx = interval_function_value(midpoint, function, stopien);
         dfx = interval_function_value(initial_guess, derivative_function,stopien);
@@ -107,13 +108,15 @@ Interval<mpreal> interval_root_Newton(
         if(width(next_guess) < width(initial_guess)){
             initial_guess = next_guess;
         }
-        else{ // Newton did it worse, doing bisection instead
+        else{ // Newton did it worse or same, doing bisection instead
             //cout << iterative;
             initial_guess = midpoint_bisection(initial_guess, function, stopien);
+            (bisection_counter)++;
         }
         //cout << "\n" << iterative << " : [" << initial_guess.a << " ; " << initial_guess.b << "]" << endl;
         iterative++;
         //cout << width(initial_guess) << endl;
+        if(width(initial_guess) > epsilon) break;
     }
     //cout << iterative << endl;
     return initial_guess;
@@ -121,11 +124,12 @@ Interval<mpreal> interval_root_Newton(
 
 Interval<mpreal> interval_get_initial_guess(
     Interval<mpreal> function[a_length],
-    int stopien
+    int stopien,
+    mpreal start = 0
 ){
     Interval<mpreal> guess; guess.a=1, guess.b=1;
     mpreal eps=1e-2;
-    for (mpreal x = 0; x < 10; x += eps) {
+    for (mpreal x = start; x < max_root; x += eps) {
         Interval<mpreal> left, right;
         left.a = x; left.b = x;
         right.a = x+eps; right.b = x+eps;
@@ -154,17 +158,19 @@ Interval<mpreal> interval_get_initial_guess(
 void interval_all_roots_Newton(
     Interval<mpreal> destination[a_length],
     Interval<mpreal> function[a_length],
-    int stopien
+    int stopien,
+    int bisection_counter[a_length]
 ){
+    Interval<mpreal> function_copy[a_length]; for(int i=0;i<a_length;i++)function_copy[i]=function[i];
     Interval<mpreal> initial_guess;
-    Interval<mpreal> derivative_function[a_length]; interval_derivative(function, derivative_function);
+    Interval<mpreal> derivative_function[a_length]; interval_derivative(function_copy, derivative_function);
     int stopien_copy = stopien;
 
     for(int i = 0; i < stopien_copy; i++){
-        initial_guess = interval_get_initial_guess(function, stopien);
-        destination[i] = interval_root_Newton(initial_guess, function, derivative_function, stopien);
-        interval_synthetic_division(destination[i], function, stopien, function);
-        interval_derivative(function, derivative_function);
+        initial_guess = interval_get_initial_guess(function_copy, stopien);
+        destination[i] = interval_root_Newton(initial_guess, function_copy, derivative_function, stopien, bisection_counter[i]);
+        interval_synthetic_division(destination[i], function_copy, stopien, function_copy);
+        interval_derivative(function_copy, derivative_function);
         stopien--;
         //cout << "Root nr. " << i+1 << " / " << stopien_copy << " : [" << destination[i].a << " ; " << destination[i].b << "]" << endl;
     }
@@ -218,7 +224,7 @@ mpreal root_Newton(
 ){
     mpreal fx; //value of function
     mpreal dfx; //value of derivative
-    for (int iterative = 0; iterative < 100; iterative=iterative+1) {
+    for (int iterative = 0; iterative < max_iterations; iterative=iterative+1) {
         fx = function_value(initial_guess, function, stopien);
         dfx = function_value(initial_guess, derivative_function,stopien);
         if(fx == 0){ // End if f(x)=0 is found
@@ -238,14 +244,15 @@ void all_roots_Newton(
     mpreal function[a_length],
     int stopien
 ){
+    mpreal function_copy[a_length]; for(int i=0;i<a_length;i++)function_copy[i]=function[i];
     mpreal initial_guess = 1;
-    mpreal derivative_function[a_length]; derivative(function, derivative_function);
+    mpreal derivative_function[a_length]; derivative(function_copy, derivative_function);
     int stopien_copy = stopien;
 
     for(int i = 0; i < stopien_copy; i++){
-        destination[i] = root_Newton(initial_guess, function, derivative_function, stopien);
-        synthetic_division(destination[i], function, stopien, function);
-        derivative(function, derivative_function);
+        destination[i] = root_Newton(initial_guess, function_copy, derivative_function, stopien);
+        synthetic_division(destination[i], function_copy, stopien, function_copy);
+        derivative(function_copy, derivative_function);
         stopien--;
         cout << "Root nr. " << i+1 << " / " << stopien_copy << " : " << destination[i] << endl;
     }
