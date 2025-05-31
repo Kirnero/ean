@@ -62,9 +62,9 @@ int main() {
 
     log_box = new Fl_Box(350, 20, 600, 20, "");
 
-    //input_prec = new Fl_Input(120, 50, 50, 25, "Dokładność");
-    //prec_btn = new Fl_Button(300, 50, 80, 30, "Zapisz");
-    
+    input_prec = new Fl_Input(120, 50, 50, 25, "Dokładność");
+    prec_btn = new Fl_Button(300, 50, 80, 30, "Zapisz");
+    prec_btn->callback(get_output_prec);
 
     input1 = new Fl_Input(120, 90, 150, 25, "Stopien:");
     stopien_btn = new Fl_Button(300, 90, 80, 30, "Zapisz");
@@ -79,6 +79,7 @@ int main() {
     current_function->align(FL_ALIGN_BOTTOM);
 
     print_saved_function_real(static_cast<void*>(cbr));
+    //print_saved_function_interval(static_cast<void*>(cbi));
     interval_all_roots_Newton(interval_wynik, interval_function, stopien, bisection_counter),
     all_roots_Newton(wynik, function, stopien);
 
