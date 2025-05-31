@@ -155,10 +155,11 @@ Interval<mpreal> interval_get_initial_guess(
             return guess;
         }
     }
+    guess.a=NULL, guess.b=NULL;
     return guess;
 }
 
-void interval_all_roots_Newton(
+int interval_all_roots_Newton(
     Interval<mpreal> destination[a_length],
     Interval<mpreal> function[a_length],
     int stopien,
@@ -171,12 +172,17 @@ void interval_all_roots_Newton(
 
     for(int i = 0; i < stopien_copy; i++){
         initial_guess = interval_get_initial_guess(function_copy, stopien);
+        if(initial_guess.a==NULL) break;
         destination[i] = interval_root_Newton(initial_guess, function_copy, derivative_function, stopien, bisection_counter[i]);
         interval_synthetic_division(destination[i], function_copy, stopien, function_copy);
         interval_derivative(function_copy, derivative_function);
         stopien--;
-        //cout << "Root nr. " << i+1 << " / " << stopien_copy << " : [" << destination[i].a << " ; " << destination[i].b << "]" << endl;
+        cout << "Root nr. " << i+1 << " / " << stopien_copy << " : [" << destination[i].a << " ; " << destination[i].b << "]" << endl;
     }
+    if(stopien_copy==stopien){
+        return -1;
+    }
+    return stopien_copy-stopien;
 }
 
 //Intervals///////////
@@ -242,7 +248,35 @@ mpreal root_Newton(
     return initial_guess;
 }
 
-void all_roots_Newton(
+mpreal get_initial_guess(
+    mpreal function[a_length],
+    int stopien,
+    mpreal start = 0
+){
+    mpreal eps=1e-2;
+    for (mpreal x = start; x < max_root; x += eps) {
+        mpreal left, right;
+        left=x, right=x+eps;
+        mpreal f_left = function_value(left, function, stopien);
+        mpreal f_right = function_value(right, function, stopien);
+        if (f_left * f_right <= 0) {
+            // Zmiana znaku lub zero w przedziale [x, x+eps], nie powinno byc zera ale nadal
+            // Użyj x jako initial_guess
+            return x;
+        }
+        left=-x, right=-x-eps;
+        f_left = function_value(left, function, stopien);
+        f_right = function_value(right, function, stopien);
+        if (f_left * f_right <= 0) {
+            // Zmiana znaku lub zero w przedziale [-x, -x-eps], nie powinno byc zera ale nadal
+            // Użyj x jako initial_guess
+            return x;
+        }
+    }
+    return NULL;
+}
+
+int all_roots_Newton(
     mpreal destination[a_length],
     mpreal function[a_length],
     int stopien
@@ -253,10 +287,16 @@ void all_roots_Newton(
     int stopien_copy = stopien;
 
     for(int i = 0; i < stopien_copy; i++){
+        initial_guess = get_initial_guess(function, stopien);
+        if(initial_guess==NULL) break;
         destination[i] = root_Newton(initial_guess, function_copy, derivative_function, stopien);
         synthetic_division(destination[i], function_copy, stopien, function_copy);
         derivative(function_copy, derivative_function);
         stopien--;
         cout << "Root nr. " << i+1 << " / " << stopien_copy << " : " << destination[i] << endl;
     }
+    if(stopien_copy==stopien){
+        return -1;
+    }
+    return stopien_copy-stopien;
 }

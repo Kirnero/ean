@@ -48,7 +48,7 @@ int main() {
     
 
     CallbackDataReal* cbr = new CallbackDataReal{&stopien, &collected_data, function, wynik};
-    CallbackDataInterval* cbi = new CallbackDataInterval{&stopien, &collected_data, interval_function, interval_wynik};
+    CallbackDataInterval* cbi = new CallbackDataInterval{&stopien, &collected_data, interval_function, interval_wynik, bisection_counter};
     CallbackData* cb = new CallbackData{cbr, cbi};
     
     Fl_Window* win = new Fl_Window(1200, 800, "Pierwiastki wielomianu metodą Newtona / bisekcji");
@@ -85,13 +85,14 @@ int main() {
     current_function->box(FL_NO_BOX);
 
     print_saved_function_real(static_cast<void*>(cbr));
-    //print_saved_function_interval(static_cast<void*>(cbi));
-    interval_all_roots_Newton(interval_wynik, interval_function, stopien, bisection_counter),
-    all_roots_Newton(wynik, function, stopien);
+    //interval_all_roots_Newton(interval_wynik, interval_function, stopien, bisection_counter),
+    //all_roots_Newton(wynik, function, stopien);
 
     wynik_btn = new Fl_Button(120, 200, 80, 30, "Calculate");
-    //btn->callback(on_calculate);
-    output = new Fl_Box(10, 240, 380, 20, "Wynik");
+    wynik_btn->callback(wynik_real, static_cast<void*>(cbr));
+    output = new Fl_Box(10, 240, 380, 600, "Wynik");
+    output->align(FL_ALIGN_TOP | FL_ALIGN_INSIDE);
+    output->box(FL_NO_BOX);
 
     win->end();
     win->show();

@@ -41,6 +41,7 @@ struct CallbackDataInterval {
     int* collected_data;
     Interval<mpreal>* function;
     Interval<mpreal>* wynik;
+    int* bisection_counter;
 };
 
 struct CallbackData {
@@ -59,5 +60,8 @@ void get_data_interval(Fl_Widget* w, void* callback_data);
 
 void print_saved_function_real(void* callback_data);
 void print_saved_function_interval(void* callback_data);
+
+void wynik_real(Fl_Widget* w, void* callback_data);
+void wynik_interval(Fl_Widget* w, void* callback_data);
 
 #endif

@@ -9,7 +9,7 @@ using namespace mpfr;
 
 #define a_length 63
 #define cout_precision 100
-#define max_root 1e20
+#define max_root 1e3
 #define max_iterations 200
 
 void interval_derivative(
@@ -44,7 +44,7 @@ Interval<mpreal> interval_get_initial_guess(
     mpreal start
 );
 
-void interval_all_roots_Newton(
+int interval_all_roots_Newton(
     Interval<mpreal> destination[a_length],
     Interval<mpreal> function[a_length],
     int stopien,
@@ -80,7 +80,7 @@ mpreal root_Newton(
     int stopien
 );
 
-void all_roots_Newton(
+int all_roots_Newton(
     mpreal destination[a_length],
     mpreal function[a_length],
     int stopien
