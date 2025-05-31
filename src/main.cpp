@@ -60,7 +60,7 @@ int main() {
     choice->value(0);
     choice->callback(on_choice_change, static_cast<void*>(cb));
 
-    log_box = new Fl_Box(350, 20, 600, 20, "");
+    log_box = new Fl_Box(400, 20, 600, 20, "");
 
     input_prec = new Fl_Input(120, 50, 50, 25, "Dokładność");
     prec_btn = new Fl_Button(300, 50, 80, 30, "Zapisz");
@@ -73,19 +73,25 @@ int main() {
     input2 = new Fl_Input(120, 120, 150, 25, "Wykładnik:");
     wyznacznik_btn = new Fl_Button(300, 120, 80, 30, "Zapisz");
     wyznacznik_btn->callback(get_data_real, static_cast<void*>(cbr));
+
+    input3 = new Fl_Input(120, 120, 150, 25, "Lewa strona:"); input3->hide();
+    input4 = new Fl_Input(120, 150, 150, 25, "Prawa strona:"); input4->hide();
+    wyznacznik_interval_btn = new Fl_Button(300, 150, 80, 30, "Zapisz"); wyznacznik_interval_btn->hide();
+    wyznacznik_interval_btn->callback(get_data_interval, static_cast<void*>(cbi));
     
 
-    current_function = new Fl_Box(350, 50, 600, 30);
-    current_function->align(FL_ALIGN_BOTTOM);
+    current_function = new Fl_Box(400, 50, 600, 600);
+    current_function->align(FL_ALIGN_TOP | FL_ALIGN_INSIDE);
+    current_function->box(FL_NO_BOX);
 
     print_saved_function_real(static_cast<void*>(cbr));
     //print_saved_function_interval(static_cast<void*>(cbi));
     interval_all_roots_Newton(interval_wynik, interval_function, stopien, bisection_counter),
     all_roots_Newton(wynik, function, stopien);
 
-    wynik_btn = new Fl_Button(120, 160, 80, 30, "Calculate");
+    wynik_btn = new Fl_Button(120, 200, 80, 30, "Calculate");
     //btn->callback(on_calculate);
-    output = new Fl_Box(10, 200, 380, 20, "Wynik");
+    output = new Fl_Box(10, 240, 380, 20, "Wynik");
 
     win->end();
     win->show();

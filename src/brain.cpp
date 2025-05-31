@@ -108,6 +108,9 @@ Interval<mpreal> interval_root_Newton(
         if(width(next_guess) < width(initial_guess)){
             initial_guess = next_guess;
         }
+        else if(width(next_guess)==0){
+            initial_guess = next_guess;
+        }
         else{ // Newton did it worse or same, doing bisection instead
             //cout << iterative;
             initial_guess = midpoint_bisection(initial_guess, function, stopien);

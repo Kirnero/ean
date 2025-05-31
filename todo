@@ -1,7 +1,5 @@
 GRAPHICS
-    configurable precision?
     interval
-        get interval data
         find and print interval roots
     on change choice
     print out results

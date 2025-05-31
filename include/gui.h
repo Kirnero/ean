@@ -14,6 +14,8 @@ using namespace std;
 #pragma once
 extern Fl_Input* input1;
 extern Fl_Input* input2;
+extern Fl_Input* input3;
+extern Fl_Input* input4;
 extern Fl_Input* input_prec;
 extern Fl_Box* output;
 extern Fl_Box* log_box;
@@ -21,6 +23,7 @@ extern Fl_Box* current_function;
 extern Fl_Choice* choice;
 extern Fl_Button* stopien_btn;
 extern Fl_Button* wyznacznik_btn;
+extern Fl_Button* wyznacznik_interval_btn;
 extern Fl_Button* wynik_btn;
 extern Fl_Button* prec_btn;
 extern int current_choice; // 0 - real; 1 - point-interval; 2 - real interval
@@ -51,6 +54,7 @@ void get_stopien(Fl_Widget* w, void* stopien);
 void get_output_prec(Fl_Widget* w, void*);
 
 void get_data_real(Fl_Widget* w, void* callback_data);
+void get_data_interval_point(Fl_Widget* w, void* callback_data);
 void get_data_interval(Fl_Widget* w, void* callback_data);
 
 void print_saved_function_real(void* callback_data);
