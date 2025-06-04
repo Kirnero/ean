@@ -11,9 +11,7 @@ using namespace mpfr;
 #define cout_precision 100
 #define max_root 1e3
 #define max_iterations 200
-
-#pragma once
-mpreal epsilon = 1e-14;
+#define epsilon_placeholder "1e-20"
 
 void interval_derivative(
     const Interval<mpreal> function[a_length],

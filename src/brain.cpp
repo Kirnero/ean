@@ -85,10 +85,10 @@ Interval<mpreal> interval_root_Newton(
     Interval<mpreal> dfx; //value of derivative
     Interval<mpreal> next_guess;
     Interval<mpreal> midpoint;
+    mpreal epsilon = mpreal(epsilon_placeholder);
     //cout << epsilon << endl;
     cout.precision(cout_precision);
     //cout << "Initial guess : [" << initial_guess.a << " ; " << initial_guess.b << "]" << endl;
-    int iterative = 0; // How many iterations it takes
 
     for(int i=0; i<max_iterations; i++) {
         midpoint.a = (initial_guess.a+initial_guess.b)/2; midpoint.b=midpoint.a;
@@ -100,6 +100,10 @@ Interval<mpreal> interval_root_Newton(
             break;}
         if (dfx.a <= 0 && dfx.b >= 0) { // Avoid division by zero
             cout << "Error: dividing by zero in function: interval_root_Newton";
+            Interval<mpreal> nan_interval;
+            nan_interval.a = mpreal("nan");
+            nan_interval.b = mpreal("nan");
+            return nan_interval;
             break;}
         next_guess = midpoint - fx / dfx;
         next_guess = intersect(initial_guess, next_guess);
@@ -116,11 +120,10 @@ Interval<mpreal> interval_root_Newton(
             (bisection_counter)++;
         }
         //cout << "\n" << iterative << " : [" << initial_guess.a << " ; " << initial_guess.b << "]" << endl;
-        iterative++;
         //cout << width(initial_guess) << endl;
         if(width(initial_guess) < epsilon) break;
     }
-    //cout << iterative << endl;
+    cout << "Warning: Interval Newton did not converge within max_iterations" << endl;
     return initial_guess;
 }
 
@@ -171,8 +174,16 @@ int interval_all_roots_Newton(
 
     for(int i = 0; i < stopien_copy; i++){
         initial_guess = interval_get_initial_guess(function_copy, stopien);
-        if(isnan(initial_guess.a) || isnan(initial_guess.b)) break;
-        destination[i] = interval_root_Newton(initial_guess, function_copy, derivative_function, stopien, bisection_counter[i]);
+        if(isnan(initial_guess.a) || isnan(initial_guess.b)){
+            cout << "Error: Couldn't get interval initial guess" << endl;
+            break;
+        }
+        Interval<mpreal> canditate; canditate = interval_root_Newton(initial_guess, function_copy, derivative_function, stopien, bisection_counter[i]);
+        if(isnan(initial_guess.a) || isnan(initial_guess.b)){
+            cout << "Error: An error happened in interval_root_Newton" << endl;
+            break;
+        }
+        destination[i] = canditate;
         interval_synthetic_division(destination[i], function_copy, stopien, function_copy);
         interval_derivative(function_copy, derivative_function);
         stopien--;
@@ -232,24 +243,28 @@ mpreal root_Newton(
 ){
     mpreal fx; //value of function
     mpreal dfx; //value of derivative
+    mpreal epsilon = mpreal(epsilon_placeholder);
+    mpreal eps = mpreal("1e-40");
+
     for (int iterative = 0; iterative < max_iterations; iterative=iterative+1) {
         fx = function_value(initial_guess, function, stopien);
         dfx = function_value(initial_guess, derivative_function,stopien);
-        if(fx == 0){ // End if f(x)=0 is found
+        if(abs(fx) < eps){ // End if f(x)=0 is found
             cout << "Interrupt: got f(x) == 0" << endl;
-            break;}
-        if (dfx == 0) { // Avoid division by zero
-            cout << "Error: dividing by zero in function: root_Newton";
-            break;}
+            return initial_guess;}
+        if (abs(dfx) < eps) { // Avoid division by zero
+            cout << "Error: dividing by (almost) zero in function: root_Newton";
+            return mpreal("nan");}
         mpreal next_guess = initial_guess - fx / dfx;
 
         mpreal diff = abs(next_guess- initial_guess);
         mpreal scale = max(abs(next_guess), abs(initial_guess));
-
+        scale = max(scale, mpreal("1e-30"));
+        if (diff / scale < epsilon) return next_guess;
         initial_guess=next_guess;
-        if (diff / scale < epsilon) break;
+        
     }
-    //cout << initial_guess << endl;
+    cout << "Warning: Newton did not converge within max_iterations" << endl;
     return initial_guess;
 }
 
@@ -293,14 +308,23 @@ int all_roots_Newton(
 
     for(int i = 0; i < stopien_copy; i++){
         initial_guess = get_initial_guess(function, stopien);
-        if(isnan(initial_guess)) break;
-        destination[i] = root_Newton(initial_guess, function_copy, derivative_function, stopien);
+        if(isnan(initial_guess)){
+            cout << "Error: Couldn't get real initial guess" << endl;
+            break;
+        }
+        mpreal canditate = root_Newton(initial_guess, function_copy, derivative_function, stopien);
+        if(isnan(canditate)){
+            cout << "Error: An error happened in root_Newton" << endl;
+            break;
+        }
+        destination[i] = canditate;
         synthetic_division(destination[i], function_copy, stopien, function_copy);
         derivative(function_copy, derivative_function);
         stopien--;
         cout << "Root nr. " << i+1 << " / " << stopien_copy << " : " << destination[i] << endl;
     }
     if(stopien_copy==stopien){
+        cout << " No root has been found in the function" << endl;
         return -1;
     }
     return stopien_copy-stopien;

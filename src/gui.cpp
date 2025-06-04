@@ -75,10 +75,13 @@ void on_choice_change(Fl_Widget* w, void* data) {
 
     CallbackDataReal* cbr = static_cast<CallbackDataReal*>(cb->callback_data_real);
     CallbackDataInterval* cbi = static_cast<CallbackDataInterval*>(cb->callback_data_interval);
+    int* collected_data_real = static_cast<int*>(cbr->collected_data);
+    int* collected_data_interval = static_cast<int*>(cbi->collected_data);
 
     current_choice = choice->value();
     
     if(current_choice==0){
+        (*collected_data_real)=0;
         wyznacznik_btn->callback(get_data_real, static_cast<void*>(cbr));
         input3->hide();
         input4->hide();
@@ -93,6 +96,7 @@ void on_choice_change(Fl_Widget* w, void* data) {
         print_saved_function_real(static_cast<void*>(cbr));
     }
     else if(current_choice==1){
+        (*collected_data_interval)=0;
         wyznacznik_btn->callback(get_data_interval_point, static_cast<void*>(cbi));
         input3->hide();
         input4->hide();
@@ -107,6 +111,7 @@ void on_choice_change(Fl_Widget* w, void* data) {
         print_saved_function_interval(static_cast<void*>(cbi));
     }
     else if(current_choice==2){
+        (*collected_data_interval)=0;
         wyznacznik_btn->callback(get_data_interval, static_cast<void*>(cbi));
         input3->show();
         input4->show();

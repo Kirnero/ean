@@ -29,7 +29,6 @@ void interval_initialize(
 
 int main() {
     int stopien;
-    bool interval_input = true;
     int collected_data = 0; // NEXT place to fill
 
     Interval<mpreal> interval_function[a_length]; // ex. a={1,2,3} -> x^2 + 2x + 3
