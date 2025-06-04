@@ -12,6 +12,9 @@ using namespace mpfr;
 #define max_root 1e3
 #define max_iterations 200
 
+#pragma once
+mpreal epsilon = 1e-14;
+
 void interval_derivative(
     const Interval<mpreal> function[a_length],
     Interval<mpreal> derivative_function[a_length]

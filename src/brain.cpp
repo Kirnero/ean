@@ -85,7 +85,6 @@ Interval<mpreal> interval_root_Newton(
     Interval<mpreal> dfx; //value of derivative
     Interval<mpreal> next_guess;
     Interval<mpreal> midpoint;
-    mpreal epsilon = 1e-14;
     //cout << epsilon << endl;
     cout.precision(cout_precision);
     //cout << "Initial guess : [" << initial_guess.a << " ; " << initial_guess.b << "]" << endl;
@@ -99,7 +98,7 @@ Interval<mpreal> interval_root_Newton(
         if(fx.a==0 && fx.b==0){ // End if f(x)=0 is found
             cout << "End" << endl;
             break;}
-        if (dfx.a < 0 && dfx.b > 0) { // Avoid division by zero
+        if (dfx.a <= 0 && dfx.b >= 0) { // Avoid division by zero
             cout << "Error: dividing by zero in function: interval_root_Newton";
             break;}
         next_guess = midpoint - fx / dfx;
@@ -119,7 +118,7 @@ Interval<mpreal> interval_root_Newton(
         //cout << "\n" << iterative << " : [" << initial_guess.a << " ; " << initial_guess.b << "]" << endl;
         iterative++;
         //cout << width(initial_guess) << endl;
-        if(width(initial_guess) > epsilon) break;
+        if(width(initial_guess) < epsilon) break;
     }
     //cout << iterative << endl;
     return initial_guess;
@@ -155,7 +154,7 @@ Interval<mpreal> interval_get_initial_guess(
             return guess;
         }
     }
-    guess.a=NULL, guess.b=NULL;
+    guess.a=mpreal("nan"), guess.b=mpreal("nan");
     return guess;
 }
 
@@ -172,7 +171,7 @@ int interval_all_roots_Newton(
 
     for(int i = 0; i < stopien_copy; i++){
         initial_guess = interval_get_initial_guess(function_copy, stopien);
-        if(initial_guess.a==NULL) break;
+        if(isnan(initial_guess.a) || isnan(initial_guess.b)) break;
         destination[i] = interval_root_Newton(initial_guess, function_copy, derivative_function, stopien, bisection_counter[i]);
         interval_synthetic_division(destination[i], function_copy, stopien, function_copy);
         interval_derivative(function_copy, derivative_function);
@@ -242,7 +241,13 @@ mpreal root_Newton(
         if (dfx == 0) { // Avoid division by zero
             cout << "Error: dividing by zero in function: root_Newton";
             break;}
-        initial_guess = initial_guess - fx / dfx;
+        mpreal next_guess = initial_guess - fx / dfx;
+
+        mpreal diff = abs(next_guess- initial_guess);
+        mpreal scale = max(abs(next_guess), abs(initial_guess));
+
+        initial_guess=next_guess;
+        if (diff / scale < epsilon) break;
     }
     //cout << initial_guess << endl;
     return initial_guess;
@@ -273,7 +278,7 @@ mpreal get_initial_guess(
             return x;
         }
     }
-    return NULL;
+    return mpreal("nan");
 }
 
 int all_roots_Newton(
@@ -288,7 +293,7 @@ int all_roots_Newton(
 
     for(int i = 0; i < stopien_copy; i++){
         initial_guess = get_initial_guess(function, stopien);
-        if(initial_guess==NULL) break;
+        if(isnan(initial_guess)) break;
         destination[i] = root_Newton(initial_guess, function_copy, derivative_function, stopien);
         synthetic_division(destination[i], function_copy, stopien, function_copy);
         derivative(function_copy, derivative_function);

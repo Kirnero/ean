@@ -146,7 +146,7 @@ void get_stopien(Fl_Widget* w, void* stopien){
         int test = stoi(canditate);  // if this throws, input is invalid
         if(test<0 || test>=a_length) throw 2;
     } catch (...) {
-        log_box->label("Error: Wartość stopnia wielomianu musi być liczbą naturalną");
+        log_box->label("Error: Wartość stopnia wielomianu musi być liczbą naturalną mniejszą od a_length");
         log_box->redraw();
         return;
     }
